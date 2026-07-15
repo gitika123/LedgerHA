@@ -13,6 +13,15 @@ Prove that committed order rows survive writer loss and that the application can
    - Approximate seconds until the writer endpoint accepts connections again
    - Whether the known order is still readable (should be — Multi-AZ is for durability/HA of the primary)
 5. Recycle the app DB pool if needed (`pool_pre_ping=True` already reduces stale connections).
+6. Run the timed probe and save the printed `reconnect_seconds`:
+
+```bash
+export DATABASE_URL='...'
+export ORDER_ID='...'
+python scripts/measure_reconnect.py
+```
+
+Only put that number on a resume after this script prints it for your account/region.
 
 ## Notes for interviews
 

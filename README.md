@@ -67,7 +67,16 @@ Then point `DATABASE_URL` at the RDS writer endpoint and rerun the app (preferab
 
 ## Failover drill
 
-See [docs/failover.md](docs/failover.md). Resume talking point: reboot with failover → measure client reconnect window → confirm no committed-row loss on standby promote.
+See [docs/failover.md](docs/failover.md). Timed probe:
+
+```bash
+export DATABASE_URL='postgresql+psycopg://...'
+export ORDER_ID='<committed-order-uuid>'
+python scripts/measure_reconnect.py
+# prints reconnect_seconds=N.N — use that N on the resume only after you measure it
+```
+
+Interview talking point: reboot with failover → measure client reconnect window → confirm no committed-row loss on standby promote.
 
 ## Resume bullets
 
