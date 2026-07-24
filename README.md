@@ -65,31 +65,3 @@ terraform apply   # set tfvars: project name, engine postgres, instance class
 
 Then point `DATABASE_URL` at the RDS writer endpoint and rerun the app (preferably from a bastion / private subnet / SSM host).
 
-## Failover drill
-
-See [docs/failover.md](docs/failover.md). Timed probe:
-
-```bash
-export DATABASE_URL='postgresql+psycopg://...'
-export ORDER_ID='<committed-order-uuid>'
-python scripts/measure_reconnect.py
-# prints reconnect_seconds=N.N — use that N on the resume only after you measure it
-```
-
-Interview talking point: reboot with failover → measure client reconnect window → confirm no committed-row loss on standby promote.
-
-## Resume bullets
-
-- Built LedgerHA on Amazon RDS Multi-AZ PostgreSQL so order data survived AZ loss; FastAPI issued PK lookups and status/customer indexed queries instead of table scans.
-- Provisioned VPC, private DB subnets, and Secrets Manager-backed credentials with Terraform; documented a Multi-AZ failover drill that validates writer promotion and client reconnect behavior.
-
-## Interview whiteboard
-
-1. Why Multi-AZ vs read replica for durability of writes  
-2. Difference between Multi-AZ standby and Aurora reader  
-3. Which indexes exist and which queries use them  
-4. Connection handling across failover (DNS / endpoint / pool recycle)
-
-## License
-
-MIT © Gitika Rath
